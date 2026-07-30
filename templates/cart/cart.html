@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="card shadow-lg rounded-4 overflow-hidden">
+
+    {% if items %}
+    <div class="row g-0 flex-column flex-md-row">
+
+      <!-- CART ITEMS SECTION -->
+      <div class="col-12 col-md-8 cart p-4 bg-white">
+        <div class="title mb-4">
+          <h4><b>Shopping Bag</b></h4>
+        </div>
+
+        {% for item in items %}
+        <div class="row border-top border-bottom py-3 align-items-center text-center text-md-start">
+
+          <!-- Image -->
+          <div class="col-12 col-sm-4 col-md-3 mb-3 mb-md-0">
+            <img class="img-fluid w-100" style="height: 120px; object-fit: contain;" 
+                 src="{{ item.product.details_image.first.image.url }}" alt="Product">
+          </div>
+
+          <!-- Product Info -->
+          <div class="col-12 col-sm-8 col-md-5 mb-3 mb-md-0">
+            <h6 class="fw-bold">{{ item.product.product_name }}</h6>
+            <p class="small text-muted text-truncate mb-0">
+              {{ item.product.description }}...
+            </p>
+          </div>
+
+          <!-- Quantity Controls -->
+          <div class="col-4 col-md-2 mb-3 mb-md-0">
+            <div class="d-flex justify-content-center justify-content-md-start align-items-center">
+              <a href="{% url 'decrease' item.id %}" class="quantity-control">-</a>
+              <span class="border px-2 mx-1">{{ item.quantity }}</span>
+              <a href="{% url 'increase' item.id %}" class="quantity-control">+</a>
+            </div>
+          </div>
+
+          <!-- Prices -->
+          <div class="col-8 col-md-2 text-md-end">
+            {% if item.line_discount %}
+              <span class="text-muted text-decoration-line-through d-block">₹{{ item.line_original_total|floatformat:2 }}</span>
+              <strong class="text-success d-block">₹{{ item.line_total|floatformat:2 }}</strong>
+            {% else %}
+              <strong class="text-success d-block">₹{{ item.line_total|floatformat:2 }}</strong>
+            {% endif %}
+            <a href="{% url 'delete_from_cart' item.id %}" class="text-danger d-inline-block mt-2">
+              <i class="fas fa-trash-alt"></i>
+            </a>
+          </div>
+
+        </div>
+        {% endfor %}
+
+        <div class="mt-4">
+          <a href="{% url 'home' %}" class="text-decoration-none">&larr; <span class="text-dark">Back to shop</span></a>
+        </div>
+      </div>
+
+      <!-- SUMMARY SECTION -->
+      <div class="col-12 col-md-4 summary p-4 bg-light">
+        <div class="row mb-2">
+          <div class="col">
+            <h5><b>Price Details</b></h5>
+          </div>
+          <div class="col text-end"><i>(Items {{ total_quantity }})</i></div>
+        </div>
+        <hr>
+
+        <div class="row mb-2">
+          <div class="col">Shipping Charges</div>
+          <div class="col text-end">
+            {% if shipping == 0 %}
+              <span class="text-success">Free</span>
+              <span class="text-decoration-line-through">₹{{ shipping }}</span>
+            {% else %}
+              <span class="text-danger">₹{{ shipping }}</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="row border-top pt-3 pb-3">
+          <div class="col">TOTAL PRICE</div>
+          <div class="col text-end">₹{{ total|add:discount }}</div>
+        </div>
+
+        <div class="row border-top pt-3 pb-3">
+          <div class="col">DISCOUNT</div>
+          <div class="col text-end">₹{{ discount }}</div>
+        </div>
+
+        <div class="row border-top pt-3 pb-3">
+          <div class="col fw-bold">GRAND TOTAL</div>
+          <div class="col text-end fw-bold">₹{{ grand }}</div>
+        </div>
+
+        <a href="{% url 'address' %}" class="btn btn-dark mt-4 w-100">CHECKOUT</a>
+      </div>
+    </div>
+
+    {% else %}
+    <!-- EMPTY CART -->
+    <div class="bg-white p-4 text-center">
+      <img src="{% static 'images/cart.png' %}" alt="bag" class="img-fluid mb-3" style="max-width: 300px;">
+      <h4>Your shopping bag is empty</h4>
+      <p class="text-muted">Looks like you haven’t added anything yet.</p>
+      <a href="{% url 'all_products' %}" class="btn btn-dark">Start Shopping</a>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+
+{% endblock %}

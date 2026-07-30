@@ -1,0 +1,188 @@
+{% extends 'base.html'%} 
+
+{%load static %}
+
+{% block content %}
+
+<div class="container py-4">
+<h2 class="mb-4 fw-bold text-center"> {{heading}} </h2>
+
+<hr>
+<!-- Main Container -->
+<div class="container-fluid">
+  <div class="row">
+
+    <!-- Filter Sidebar -->
+    <div class="col-md-4 col-lg-3 mb-4">
+      <form method="get" class="border rounded shadow-sm bg-white">
+        <div class="bg-white text-center border-bottom p-3">
+          <h5 class="text-uppercase fw-bold m-0" style="letter-spacing: 1px;">Filter Products</h5>
+        </div>
+
+        <div class="p-3">
+
+          <h6 class="fw-bold mb-2">Categories</h6>
+          {% for cat in categories %}
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="checkbox" name="category" value="{{ cat.id }}" id="cat{{ cat.id }}"
+                {% if cat.id|stringformat:"s" in selected_categories %}checked{% endif %}>
+              <label class="form-check-label" for="cat{{ cat.id }}">{{ cat.cat_name }}</label>
+            </div>
+          {% endfor %}
+
+          <hr>
+          <h6 class="text-muted fw-semibold mb-2 mt-3">Price Range (₹)</h6>
+    <div class="input-group mb-3">
+      <input type="number" class="form-control" name="min_price" placeholder="Min" min="0">
+      <input type="number" class="form-control" name="max_price" placeholder="Max" min="0">
+    </div>
+
+
+        <hr>
+          <h6 class="fw-semibold mb-2">Availability</h6>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="is_available" value="in" id="inStock"
+              {% if 'in' in selected_availability %}checked{% endif %}>
+            <label class="form-check-label" for="inStock">In Stock</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="is_available" value="out" id="outStock"
+              {% if 'out' in selected_availability %}checked{% endif %}>
+            <label class="form-check-label" for="outStock">Out of Stock</label>
+          </div>
+
+          <button type="submit" class="btn btn-dark w-100 mt-3">Apply Filters</button>
+        </div>
+      </form>
+    </div>
+
+
+    <!-- Product Grid -->
+    <div class="col-md-8 col-lg-9">
+      <!-- Filter Header Row -->
+      <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
+        {% if search_query or selected_category %}
+          <h6 class="text-muted mb-2 mb-md-0">
+            Showing results for:
+            {% if search_query %}<strong>"{{ search_query }}"</strong>{% endif %}
+            {% if search_query and selected_category %} in {% endif %}
+            {% if selected_category %}
+              <strong>{{ selected_category }}</strong>
+            {% endif %}
+          </h6>
+        {% endif %}
+
+        <!-- Sorting Dropdown -->
+        <div class="d-flex align-items-center" style="gap: 8px;">
+          <span class="fw-semibold">Sort by</span>
+          <div class="dropdown">
+            <button class="btn btn-outline-dark dropdown-toggle px-3 py-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              {{ selected_sort|default:"Popularity" }}
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="?{% if request.GET.view %}view={{ request.GET.view }}&{% endif %}sort=popularity">Popularity</a></li>
+              <li><a class="dropdown-item" href="?{% if request.GET.view %}view={{ request.GET.view }}&{% endif %}sort=price_low">Price Low-to-High</a></li>
+              <li><a class="dropdown-item" href="?{% if request.GET.view %}view={{ request.GET.view }}&{% endif %}sort=price_high">Price High-to-Low</a></li>
+              <li><a class="dropdown-item" href="?{% if request.GET.view %}view={{ request.GET.view }}&{% endif %}sort=newest">Newest First</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+
+
+
+      <div class="row">
+        {% for product in page_object %}
+          <div class="col-12 col-md-6 col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm position-relative h-100 rounded-4 overflow-hidden product-card hover-shadow-lg">
+
+              <!-- Product Image -->
+              <div class="position-relative bg-white text-center p-2" style="height: 220px;">
+                <!-- Wishlist Button -->
+                <button class="btn position-absolute top-0 end-0 m-2 rounded-circle wishlist-btn shadow-sm"
+                        data-product-id="{{ product.id }}"
+                        onclick="event.stopPropagation(); toggleWishlist(this)"
+                        title="Toggle wishlist">
+                  <i class="{% if product.id in wishlist_ids %}fas{% else %}far{% endif %} fa-heart text-danger"></i>
+                </button>
+
+                {% with product.details_image.all|first as first_image %}
+                  {% if first_image %}
+                    <img src="{{ first_image.image.url }}" class="h-100 w-100 p-1 rounded-4" style="object-fit: contain; background-color: #faf6e9;" alt="{{ product.product_name }}">
+                  {% else %}
+                    <img src="{% static 'images/no-image.png' %}" class="h-100 w-100 p-3" style="object-fit: contain;" alt="No Image">
+                  {% endif %}
+                {% endwith %}
+              </div>
+
+              <!-- Card Body -->
+              <div class="card-body text-center position-relative px-3">
+                <!-- Stretched link inside card body -->
+                <a href="{% url 'product_details' product.id %}" class="stretched-link"></a>
+
+                <!-- Product Title -->
+                <h6 class="fw-semibold text-truncate mb-1">{{ product.product_name }}</h6>
+
+                <!-- Description -->
+                  <p class="text-muted small text-truncate" style="min-height: 18px;" title="{{ product.description }}">{{ product.description }}</p>
+
+                <!-- Prices -->
+                <div class="mb-2">
+                  <span class="fw-bold fs-5 text-dark">₹{{ product.discount_price }}</span>
+                  {% if product.original_price and product.discount_price != product.original_price %}
+                    <span class="text-muted text-decoration-line-through ms-2">₹{{ product.original_price }}</span>
+                  {% endif %}
+                </div>
+
+                <!-- Free Shipping -->
+                <div style="min-height: 20px;">
+                  {% if product.discount_price and product.discount_price > 1999 %}
+                    <span class="text-success small d-block">
+                      <i class="fas fa-shipping-fast me-1"></i>Free shipping
+                    </span>
+                  {% else %}
+                    &nbsp;
+                  {% endif %}
+                </div>
+                <!-- Buttons -->
+                <div class="d-flex justify-content-center gap-2 mt-2 position-relative">
+                  <a href="{% url 'add_to_cart' product.id %}" class="btn btn-dark rounded-pill w-50">Add to Cart</a>
+                  <button class="btn btn-warning rounded-pill w-50">Buy Now</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- pagination -->
+<nav aria-label="Page Navigation">
+        <ul class="pagination pagination-circle justify-content-center mt-4">
+          {% if page_object.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_object.previous_page_number }}">Previous</a>
+            </li>
+          {% endif %}
+
+          {% for i in page_object.paginator.page_range %}
+            <li class="page-item {% if i == page_object.number %}active{% endif %}">
+              <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+            </li>
+          {% endfor %}
+
+          {% if page_object.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_object.next_page_number }}">Next</a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+</div>
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <!-- Product Image Section -->
+        <div class="col-md-6 text-center mb-4">
+            <!-- Main Image: First from detail_images -->
+            {% with product.details_image.all|first as first_image %}
+                {% if first_image %}
+                    <img src="{{ first_image.image.url }}" alt="Product Image"
+                        id="mainImage"
+                        class="img-fluid shadow-lg rounded-2">
+                {% else %}
+                    <img src="{% static 'default.jpg' %}" alt="No Image"
+                        id="mainImage"
+                        class="img-fluid shadow-lg rounded-2">
+                {% endif %}
+            {% endwith %}
+
+
+            <!-- Thumbnails -->
+            <div class="d-flex justify-content-center gap-2 mt-4 flex-wrap">
+                {% for img in product.details_image.all %}
+                    {% if img.image %}
+                        <img src="{{ img.image.url }}" alt="Variant"
+                            onclick="changeImage('{{img.image.url}}' )"
+                            class="rounded-2 border border-2 p-1 shadow"
+                            style="width: 120px; height: 120px; object-fit: contain; cursor: pointer;">
+                    {% else %}
+                        <img src="{% static 'default.jpg' %}" alt="No Image"
+                            class="rounded-2 border border-2 p-1 shadow"
+                            style="width: 120px; height: 120px; object-fit: contain; cursor: pointer;">
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+        </div>
+
+
+        <!-- Product Details Section -->
+        <div class="col-md-6">
+            <h4 class="text-uppercase text-muted fw-semibold mb-1">{{ product.category }}</h4>
+            <h2 class="fw-bold">{{ product.product_name }}</h2>
+
+            <!-- Prices -->
+            <div class="my-3">
+                <span class="fs-3 fw-semibold text-success">₹{{ product.discount_price }}</span>
+                {% if product.original_price %}
+                    <span class="text-muted text-decoration-line-through fs-5 ms-2">₹{{ product.original_price }}</span>
+                {% endif %}
+            </div>
+
+            <!-- Rating -->
+            <div class="mb-1">
+                {% with rating=product.reviews %}
+                  {% for i in "12345" %}
+                    {% if rating >= forloop.counter %}
+                      <i class="fa fa-star text-warning"></i>
+                    {% elif rating >= forloop.counter0|add:"0.5" %}
+                      <i class="fa fa-star-half-alt text-warning"></i>
+                    {% else %}
+                      <i class="fa fa-star text-secondary"></i>
+                    {% endif %}
+                  {% endfor %}
+                {% endwith %}
+              </div>
+            
+            <!-- Color Options -->
+            {% if valid_colors %}
+            <div class="product-option mb-4">
+                <label class="fw-semibold d-block mb-1">Colour</label>
+                <div class="d-flex flex-wrap gap-2">
+                    {% for img in valid_colors %}
+                    <button class="btn btn-outline-dark me-2"
+                            onclick="changeImageByColor('{{ img.image.url }}')">
+                        {{ img.colors }}
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Quantity -->
+            <div class="mb-4">
+                <label for="quantity" class="form-label fw-semibold">Quantity:</label>
+                <input type="number" class="form-control shadow-sm" id="quantity" value="1" min="1" style="width: 100px;">
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex gap-3">
+                <a href="{% url 'add_to_cart' product.id %}" class="btn btn-dark btn-lg px-4 shadow">
+                    <i class="bi bi-cart-plus me-2"></i>Add to cart
+                </a>
+                <form method="POST" action="{% url 'add_to_cart' product.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                    <button class="btn btn-outline-success btn-lg px-4 shadow">
+                        <i class="bi bi-lightning-fill me-2"></i>Buy Now
+                    </button>
+                </form>
+
+            </div>
+
+            <!-- Description -->
+             <p class="text-uppercase text-muted fw-semibold mt-4">Description:</p>
+            <p class="text-muted" style="line-height: 1.6;">{{ product.description }}</p>
+
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

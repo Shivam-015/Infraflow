@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Top Banner -->
+<div class="container px-0">
+  <div class="w-100 rounded-3 mt-4 mb-4 shadow" style="
+    background-image: url('{% static 'images/about.jpg' %}');
+    background-size: cover;
+    background-position: center 20%;
+    height: 300px;">
+  </div>
+</div>
+
+<!-- Content Section -->
+<div class="container mb-5">
+  <div class="row align-items-center g-4">
+
+    <!-- Text -->
+    <div class="col-lg-8">
+      <h2 class="fw-bold mb-3">About Nextron</h2>
+      <p class="text-muted">
+        At <strong>Nextron</strong>, we redefine audio freedom with sleek, powerful earbuds crafted for music lovers, gamers, and everyday explorers.
+        Our products are built on innovation, comfort, and top-tier sound. Whether you're on the move or at home, Nextron keeps you connected.
+      </p>
+      <p class="text-muted">
+        From design to delivery, we believe in pushing limits — so you can go beyond them.
+      </p>
+    </div>
+
+    <!-- Side Image -->
+    <div class="col-lg-4">
+      <div class="rounded-3 shadow" style="
+        background-image: url('{% static 'images/about2.jpg' %}');
+        background-size: cover;
+        background-position: center;
+        height: 250px;">
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
