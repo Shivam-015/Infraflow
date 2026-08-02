@@ -1,4 +1,32 @@
-.env
+# Virtual Environment
 venv/
+
+# Environment Variables
+.env
+
+# Python Cache
 __pycache__/
+*.pyc
+
+# Database
 db.sqlite3
+
+# IDE
+.vscode/
+.idea/
+
+# Static Files
+staticfiles/
+
+# OS Files
+.DS_Store
+
+# Logs
+*.log
+
+# Test Reports
+.coverage
+htmlcov/
+
+# Pytest
+.pytest_cache/

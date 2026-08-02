@@ -12,7 +12,7 @@ class Register(models.Model):
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, null=False)
     email = models.EmailField(null=False)
     contact = models.CharField(max_length=15, null=False)  # changed from IntegerField
-    password = models.CharField(max_length=40, null=False)
+    password = models.CharField(max_length=128, null=False)
 
     def __str__(self):
         return self.name
@@ -23,7 +23,7 @@ class Billing(models.Model):
     user = models.ForeignKey(Register , on_delete=models.CASCADE , null=True , blank=True)
     full_name = models.CharField(max_length=100)
     email_shipping = models.EmailField()
-    phone = models.IntegerField()
+    phone = models.CharField(max_length=15)
     address = models.CharField(max_length=150)
     country = models.CharField(max_length=50)
     city = models.CharField(max_length=50)
