@@ -1,0 +1,21 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  - job_name: "django-app"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["django-service.infraflow.svc.cluster.local:8000"]
+
+  - job_name: "mysql-exporter"
+    static_configs:
+      - targets: ["mysql-service.infraflow.svc.cluster.local:9104"]
+
+  - job_name: "nginx-exporter"
+    static_configs:
+      - targets: ["nginx-service.infraflow.svc.cluster.local:9113"]
