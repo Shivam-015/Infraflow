@@ -19,8 +19,8 @@ spec:
     spec:
       containers:
       - name: django-container
-        image: infraflow-djangoapp:latest
-        imagePullPolicy: IfNotPresent
+        image: shivamgupta51/infraflow-app:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8000
           name: http
