@@ -27,7 +27,7 @@ services:
 
   djangoapp:
     build:
-      context: .
+      context: ./app
       dockerfile: Dockerfile
 
     container_name: djangoapp
