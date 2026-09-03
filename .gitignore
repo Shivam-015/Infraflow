@@ -29,4 +29,5 @@ staticfiles/
 htmlcov/
 
 # Pytest
-.pytest_cache/
+.pytest_cache/*.swp
+*.swo
