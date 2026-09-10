@@ -10,9 +10,10 @@ spec:
   source:
     repoURL: 'https://github.com/Shivam-015/Infraflow.git' 
     targetRevision: HEAD
-    path: kubernetes                    
-    directory:
-      recurse: true                    
+    path: helm
+    helm:
+      valueFiles:
+        - values.yaml                    
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: infraflow
