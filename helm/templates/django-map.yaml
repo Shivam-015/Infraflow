@@ -18,34 +18,34 @@ spec:
         tier: backend
     spec:
       containers:
-      - name: django-container
-        image: "{{ .Values.django.image.repository }}:{{ .Values.django.image.tag }}"
-        imagePullPolicy: {{ .Values.django.image.pullPolicy }}
-        ports:
-        - containerPort: {{ .Values.django.service.port }}
-          name: http
-        envFrom:
-        - configMapRef:
-            name: django-config
-        - secretRef:
-            name: django-secret
-        command:
-        - "sh"
-        - "-c"
-        - |
-          until python manage.py migrate --noinput; do
-              echo "Waiting for MySQL..."
-              sleep 5
-          done
-          python manage.py collectstatic --noinput
-          exec gunicorn electronics_shop.wsgi:application --bind 0.0.0.0:8000 --workers 2 --timeout 120 --graceful-timeout 60
-        resources:
-          requests:
-            memory: {{ .Values.django.resources.requests.memory }}
-            cpu: {{ .Values.django.resources.requests.cpu }}
-          limits:
-            memory: {{ .Values.django.resources.limits.memory }}
-            cpu: {{ .Values.django.resources.limits.cpu }}
+        - name: django-container
+          image: "{{ .Values.django.image.repository }}:{{ .Values.django.image.tag }}"
+          imagePullPolicy: {{ .Values.django.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.django.service.port }}
+              name: http
+          envFrom:
+            - configMapRef:
+                name: django-config
+            - secretRef:
+                name: django-secret
+          command:
+            - "sh"
+            - "-c"
+            - |
+              until python manage.py migrate --noinput; do
+                echo "Waiting for MySQL..."
+                sleep 5
+              done
+              python manage.py collectstatic --noinput
+              exec gunicorn electronics_shop.wsgi:application --bind 0.0.0.0:8000 --workers 2 --timeout 120 --graceful-timeout 60
+          resources:
+            requests:
+              memory: {{ .Values.django.resources.requests.memory }}
+              cpu: {{ .Values.django.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.django.resources.limits.memory }}
+              cpu: {{ .Values.django.resources.limits.cpu }}
           startupProbe:
             httpGet:
               path: /healthz/
@@ -53,7 +53,6 @@ spec:
             periodSeconds: 5
             timeoutSeconds: 2
             failureThreshold: 30
-
           readinessProbe:
             httpGet:
               path: /healthz/
@@ -61,7 +60,6 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 2
             failureThreshold: 3
-
           livenessProbe:
             httpGet:
               path: /healthz/
@@ -80,9 +78,9 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - port: {{ .Values.django.service.port }}
-    targetPort: {{ .Values.django.service.port }}
-    protocol: TCP
-    name: http
+    - port: {{ .Values.django.service.port }}
+      targetPort: {{ .Values.django.service.port }}
+      protocol: TCP
+      name: http
   selector:
     app: django-app
