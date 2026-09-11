@@ -112,7 +112,7 @@ kubectl get pods -n monitoring -w
 
 ```
 
-###Step 6: Access Dashboards
+### Step 6: Access Dashboards
 🔑 Retrieve Grafana Admin Password:
 ```bash 
 kubectl get secret -n monitoring prometheus-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
