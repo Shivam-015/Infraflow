@@ -1,0 +1,27 @@
+grafana:
+  enabled: true
+  sidecar:
+    dashboards:
+      enabled: false
+    datasources:
+      enabled: false
+  image:
+    repository: docker.io/grafana/grafana
+    tag: 10.2.3
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 150m
+      memory: 256Mi
+
+kube-state-metrics:
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 10m
+      memory: 64Mi
