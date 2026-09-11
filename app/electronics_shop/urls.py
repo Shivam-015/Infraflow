@@ -47,6 +47,10 @@ from django.urls import path,include
 from django.conf.urls.static import static
 from django.conf import settings
 from accounts import views
+from django.http import JsonResponse
+
+def healthz(request):
+    return JsonResponse({"status": "ok"})
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -55,6 +59,6 @@ urlpatterns = [
      #apps url 
     path('auth/', include('social_django.urls', namespace='social')),
     path('google-login-success/', views.google_login_success, name='google_login_success'),
-
+    path("healthz/", healthz, name="healthz"),
 
 ] + static(settings.MEDIA_URL, document_root =settings.MEDIA_ROOT)
