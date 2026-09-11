@@ -52,7 +52,7 @@ spec:
               port: {{ .Values.django.service.port }}
             periodSeconds: 5
             timeoutSeconds: 2
-            failureThreshold: 30
+            failureThreshold: 60
           readinessProbe:
             httpGet:
               path: /healthz/
