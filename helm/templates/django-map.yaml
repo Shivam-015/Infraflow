@@ -33,9 +33,12 @@ spec:
         - "sh"
         - "-c"
         - |
-          python manage.py migrate && \
-          python manage.py collectstatic --noinput && \
-          gunicorn electronics_shop.wsgi:application --bind 0.0.0.0:8000 --workers 2 --timeout 120 --graceful-timeout 60
+          until python manage.py migrate --noinput; do
+              echo "Waiting for MySQL..."
+              sleep 5
+          done
+          python manage.py collectstatic --noinput
+          exec gunicorn electronics_shop.wsgi:application --bind 0.0.0.0:8000 --workers 2 --timeout 120 --graceful-timeout 60
         resources:
           requests:
             memory: {{ .Values.django.resources.requests.memory }}
