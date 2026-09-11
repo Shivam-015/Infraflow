@@ -28,7 +28,7 @@ spec:
             - configMapRef:
                 name: django-config
             - secretRef:
-                name: django-secret
+                name: django-runtime-secret
           command:
             - "sh"
             - "-c"

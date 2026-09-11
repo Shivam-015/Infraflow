@@ -18,13 +18,8 @@ django:
   config:
     dbHost: "mysql-service"
     dbName: "ecommercedb"
-    dbUser: "admin"
     dbPort: "3306"
     debug: "True"
-  secrets:
-    dbUser: "root"
-    dbPassword: "rootpassword"
-    secretKey: "django-insecure-bih5p!sw90hayvq&ntxaqvfb)ir=25k=+2y&au=g^*j+i1ha41"
 
 mysql:
   replicaCount: 1
